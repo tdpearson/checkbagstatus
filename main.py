@@ -11,15 +11,18 @@ search_url = "{0}/.json?query={{\"filter\":{{\"project\":\"private\",\"bag\":{{\
 alma_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/{0}?expand=None&apikey={1}"
 
 
-# TODO: add additional attributes to check
 xpath_lookup = {
-    "author": "//author",
-    "suppress_publishing": "//suppress_from_publishing",
+    "Title": "record/datafield[@tag=245]",
+    "Author": "record/datafield[@tag=100]",
+    "Publish Year": "record/datafield[@tag=264]|record/datafield[@tag=260]",
+    "Thesis/Diss Tag": "record/datafield[@tag=502]",
+    "School": "record/datafield[@tag=690]",
+    "Subject Heading": "record/datafield[@tag=650]"
 }
 
 
 def get_bag_name(val):
-    return val['bag']
+    return val['bag'] 
 
 
 def get_mmsid(val):
@@ -30,6 +33,7 @@ def get_bags(url):
     """ iterate over pages of search results yielding bag metadata """
 
     def all_results(url):
+        # TODO: handle if site or url does not exist
         data = loads(requests.get(url).content)
         yield data['results']
         if data['next'] is not None:
@@ -104,6 +108,6 @@ for index, result in enumerate(results):
             # generate saf
             # submit specified files(*.pdf, Abstract.txt, Committee.txt) and metadata (dc and saf)
     else:
-        pass
+        print(result)
         # TODO:
         # send email to creator and owner notifying of missing fields
